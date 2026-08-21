@@ -55,10 +55,11 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signIn: async (password) => {
     const expectedHash = import.meta.env.VITE_ADMIN_PASSWORD_HASH ?? DEFAULT_PASSWORD_HASH;
+    const trimmed = password.trim();
     let ok = false;
-    if (expectedHash && password.length > 0) {
+    if (expectedHash && trimmed.length > 0) {
       try {
-        ok = (await sha256Hex(password)) === expectedHash.toLowerCase();
+        ok = (await sha256Hex(trimmed)) === expectedHash.toLowerCase();
       } catch {
         ok = false;
       }
