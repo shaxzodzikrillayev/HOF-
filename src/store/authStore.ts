@@ -12,6 +12,10 @@ import { create } from 'zustand';
 
 const SESSION_KEY = 'hofe:admin-session';
 
+// SHA-256 of the current admin password ("WER67"). Used when the build has no
+// VITE_ADMIN_PASSWORD_HASH env var configured (e.g. Vercel without env setup).
+const DEFAULT_PASSWORD_HASH = '92e37fd3917d33f15566e377281c16158738ce5efffc4dbfb64734560166d4c8';
+
 interface AuthState {
   isAuthenticated: boolean;
   signIn: (password: string) => Promise<boolean>;
@@ -50,7 +54,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: readSession(),
 
   signIn: async (password) => {
-    const expectedHash = import.meta.env.VITE_ADMIN_PASSWORD_HASH;
+    const expectedHash = import.meta.env.VITE_ADMIN_PASSWORD_HASH ?? DEFAULT_PASSWORD_HASH;
     let ok = false;
     if (expectedHash && password.length > 0) {
       try {
